@@ -4,13 +4,14 @@ import type { Map as CarteMapLibre, Marker } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 // Le worker de MapLibre, construit par Vite (sinon introuvable une fois le site construit).
 import adresseWorker from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
+import { formaterKm } from '@/lib/distance'
 import { resumeLieu, type Lieu } from '@/lib/lieux'
 
 /**
  * Carte MapLibre, fond « Plan IGN » de la Géoplateforme (data.geopf.fr). Elle double la liste
  * des lieux, qui reste l'alternative accessible (RGAA) : tout ce qui est sur la carte est dans la liste.
  */
-const props = defineProps<{ lieux: Lieu[]; lieuChoisi: string | null }>()
+const props = defineProps<{ lieux: Lieu[]; lieuChoisi: string | null; distances?: Record<string, number> }>()
 const emit = defineEmits<{ choisir: [id: string] }>()
 
 const conteneur = useTemplateRef<HTMLDivElement>('conteneur')
@@ -22,13 +23,18 @@ const FOND_PLAN_IGN =
   'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2' +
   '&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png'
 
+function textePopup(lieu: Lieu): string {
+  const distance = props.distances?.[lieu.id]
+  return distance === undefined ? resumeLieu(lieu) : `${resumeLieu(lieu)} Distance à la commune choisie : ${formaterKm(distance)} (à vol d'oiseau).`
+}
+
 function afficherLieux(): void {
   if (!carte || !maplibre) return
   marqueurs.forEach((marqueur) => marqueur.remove())
   marqueurs = props.lieux.map((lieu) => {
     const marqueur = new maplibre!.Marker({ color: lieu.id === props.lieuChoisi ? '#e1000f' : '#000091' })
       .setLngLat(lieu.position)
-      .setPopup(new maplibre!.Popup({ offset: 24 }).setText(resumeLieu(lieu)))
+      .setPopup(new maplibre!.Popup({ offset: 24 }).setText(textePopup(lieu)))
       .addTo(carte!)
     const element = marqueur.getElement()
     element.setAttribute('aria-label', lieu.nom)
@@ -64,7 +70,7 @@ onMounted(async () => {
   carte.on('load', afficherLieux)
 })
 
-watch(() => [props.lieux, props.lieuChoisi] as const, afficherLieux)
+watch(() => [props.lieux, props.lieuChoisi, props.distances] as const, afficherLieux)
 watch(
   () => props.lieuChoisi,
   (id) => {
