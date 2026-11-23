@@ -3,7 +3,10 @@
  * Le nom de la couche est isolé ici : c'est le seul endroit à changer si Géorisques le renomme.
  */
 const ADRESSE_SERVICE = 'https://mapsref.brgm.fr/wxs/georisques/risques'
-export const COUCHE_CRUE_MOYENNE = 'TRI_ZONE_INOND_MOY'
+/** Couche affichée en bleu sur la carte : débordement de cours d'eau, crue moyenne (centennale). */
+export const COUCHE_CRUE_MOYENNE = 'INOND_01_02'
+/** Couche interrogée pour savoir si un lieu est dans la zone (surface inondable de la couche ci-dessus). */
+export const COUCHE_SURFACE_INONDABLE = 'ALEA_SYNT_01_02MOY'
 /** Demi-côté (en degrés) de la petite fenêtre interrogée autour d'un lieu : quelques mètres. */
 const DEMI_COTE_DEGRES = 0.00005
 
@@ -19,8 +22,8 @@ export function adresseQuestionPosition([longitude, latitude]: [number, number])
     .map((degres) => degres.toFixed(6))
     .join(',')
   return (
-    `${ADRESSE_SERVICE}?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=${COUCHE_CRUE_MOYENNE}&QUERY_LAYERS=${COUCHE_CRUE_MOYENNE}` +
-    `&STYLES=&CRS=EPSG:4326&BBOX=${fenetre}&WIDTH=3&HEIGHT=3&I=1&J=1&INFO_FORMAT=application/json&FEATURE_COUNT=1`
+    `${ADRESSE_SERVICE}?SERVICE=WMS&VERSION=1.3.0&REQUEST=GetFeatureInfo&LAYERS=${COUCHE_CRUE_MOYENNE}&QUERY_LAYERS=${COUCHE_SURFACE_INONDABLE}` +
+    `&STYLES=&CRS=EPSG:4326&BBOX=${fenetre}&WIDTH=3&HEIGHT=3&I=1&J=1&INFO_FORMAT=application/vnd.ogc.gml&FEATURE_COUNT=1`
   )
 }
 
@@ -28,7 +31,8 @@ export function adresseQuestionPosition([longitude, latitude]: [number, number])
 export async function estEnZoneInondable(position: [number, number]): Promise<boolean> {
   const reponse = await fetch(adresseQuestionPosition(position))
   if (!reponse.ok) throw new Error(`Géorisques indisponible (${reponse.status})`)
-  const resultat = (await reponse.json()) as { features?: unknown[] }
-  if (!Array.isArray(resultat.features)) throw new Error('Réponse Géorisques inattendue')
-  return resultat.features.length > 0
+  const texte = await reponse.text()
+  // Une réponse sans la balise de réponse (erreur, page HTML…) n'est jamais lue comme « hors zone ».
+  if (!texte.includes('<msGMLOutput')) throw new Error('Réponse Géorisques inattendue')
+  return texte.includes(`<${COUCHE_SURFACE_INONDABLE}_feature>`)
 }
