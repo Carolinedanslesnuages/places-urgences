@@ -9,6 +9,7 @@ import type { Lieu } from '@/lib/lieux'
 import * as serviceCommunes from '@/services/communes'
 
 vi.mock('@/services/communes')
+vi.mock('@/services/georisques', () => ({ estEnZoneInondable: vi.fn<() => Promise<boolean>>().mockResolvedValue(false) }))
 const rechercherCommunes = vi.mocked(serviceCommunes.rechercherCommunes)
 
 const nantesProchePontclair = { code: '44999', nom: 'Pontville', position: [-1.62, 47.19] as [number, number] }

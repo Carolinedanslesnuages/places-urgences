@@ -1,9 +1,15 @@
 <script setup lang="ts">
 import { formaterKm } from '@/lib/distance'
+import { avertissementInondation, type StatutInondation } from '@/lib/inondation'
 import { libelleCategorie, lienTelephone, ouiOuNon, type Lieu } from '@/lib/lieux'
 
 /** La liste des lieux : l'alternative accessible à la carte, et l'endroit où l'on choisit un lieu. */
-defineProps<{ lieux: Lieu[]; lieuChoisi: string | null; distances?: Record<string, number> }>()
+defineProps<{
+  lieux: Lieu[]
+  lieuChoisi: string | null
+  distances?: Record<string, number>
+  statutsInondation?: Record<string, StatutInondation>
+}>()
 const emit = defineEmits<{ choisir: [id: string] }>()
 </script>
 
@@ -11,6 +17,13 @@ const emit = defineEmits<{ choisir: [id: string] }>()
   <ul class="liste-lieux fr-p-0">
     <li v-for="lieu in lieux" :key="lieu.id" class="fr-mb-2w" :class="{ 'liste-lieux__choisi': lieu.id === lieuChoisi }">
       <h3 class="fr-h6 fr-mb-1v">{{ lieu.nom }}</h3>
+      <p v-if="statutsInondation && avertissementInondation(statutsInondation[lieu.id] ?? 'non-verifie')" class="fr-mb-1v">
+        <DsfrBadge
+          :label="avertissementInondation(statutsInondation[lieu.id] ?? 'non-verifie')"
+          :type="statutsInondation[lieu.id] === 'inondable' ? 'error' : 'warning'"
+          small
+        />
+      </p>
       <p v-if="distances?.[lieu.id] !== undefined" class="fr-text--sm fr-text--bold fr-mb-1v">
         Distance à la commune choisie : {{ formaterKm(distances[lieu.id]!) }} (à vol d'oiseau)
       </p>

@@ -5,13 +5,20 @@ import 'maplibre-gl/dist/maplibre-gl.css'
 // Le worker de MapLibre, construit par Vite (sinon introuvable une fois le site construit).
 import adresseWorker from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
 import { formaterKm } from '@/lib/distance'
+import { avertissementInondation, type StatutInondation } from '@/lib/inondation'
 import { resumeLieu, type Lieu } from '@/lib/lieux'
+import { styleCarte } from '@/lib/styleCarte'
 
 /**
  * Carte MapLibre, fond « Plan IGN » de la Géoplateforme (data.geopf.fr). Elle double la liste
  * des lieux, qui reste l'alternative accessible (RGAA) : tout ce qui est sur la carte est dans la liste.
  */
-const props = defineProps<{ lieux: Lieu[]; lieuChoisi: string | null; distances?: Record<string, number> }>()
+const props = defineProps<{
+  lieux: Lieu[]
+  lieuChoisi: string | null
+  distances?: Record<string, number>
+  statutsInondation?: Record<string, StatutInondation>
+}>()
 const emit = defineEmits<{ choisir: [id: string] }>()
 
 const conteneur = useTemplateRef<HTMLDivElement>('conteneur')
@@ -19,13 +26,11 @@ let carte: CarteMapLibre | null = null
 let marqueurs: Marker[] = []
 let maplibre: typeof import('maplibre-gl') | null = null
 
-const FOND_PLAN_IGN =
-  'https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2' +
-  '&STYLE=normal&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}&FORMAT=image/png'
-
 function textePopup(lieu: Lieu): string {
   const distance = props.distances?.[lieu.id]
-  return distance === undefined ? resumeLieu(lieu) : `${resumeLieu(lieu)} Distance à la commune choisie : ${formaterKm(distance)} (à vol d'oiseau).`
+  const avertissement = avertissementInondation(props.statutsInondation?.[lieu.id] ?? 'non-verifie')
+  const resume = avertissement ? `${avertissement}. ${resumeLieu(lieu)}` : resumeLieu(lieu)
+  return distance === undefined ? resume : `${resume} Distance à la commune choisie : ${formaterKm(distance)} (à vol d'oiseau).`
 }
 
 function afficherLieux(): void {
@@ -55,13 +60,7 @@ onMounted(async () => {
   if (!conteneur.value) return
   carte = new maplibre.Map({
     container: conteneur.value,
-    style: {
-      version: 8,
-      sources: {
-        planIgn: { type: 'raster', tiles: [FOND_PLAN_IGN], tileSize: 256, attribution: '© IGN – Géoplateforme' },
-      },
-      layers: [{ id: 'plan-ign', type: 'raster', source: 'planIgn' }],
-    },
+    style: styleCarte(),
     center: [-1.55, 47.22],
     zoom: 10,
     cooperativeGestures: true,
@@ -70,7 +69,7 @@ onMounted(async () => {
   carte.on('load', afficherLieux)
 })
 
-watch(() => [props.lieux, props.lieuChoisi, props.distances] as const, afficherLieux)
+watch(() => [props.lieux, props.lieuChoisi, props.distances, props.statutsInondation] as const, afficherLieux)
 watch(
   () => props.lieuChoisi,
   (id) => {
