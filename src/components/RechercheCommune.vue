@@ -37,6 +37,7 @@ const annonce = computed(() => {
     <DsfrInput
       id="champ-commune"
       :model-value="texteSaisi"
+      label-visible
       label="Commune : trier les lieux par distance"
       hint="Tapez le début du nom, puis choisissez une commune dans la liste proposée"
       autocomplete="off"
