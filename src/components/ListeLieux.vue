@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { libelleCategorie, type Lieu } from '@/lib/lieux'
+import { libelleCategorie, lienTelephone, ouiOuNon, type Lieu } from '@/lib/lieux'
 
 /** La liste des lieux : l'alternative accessible à la carte, et l'endroit où l'on choisit un lieu. */
 defineProps<{ lieux: Lieu[]; lieuChoisi: string | null }>()
@@ -10,8 +10,15 @@ const emit = defineEmits<{ choisir: [id: string] }>()
   <ul class="liste-lieux fr-p-0">
     <li v-for="lieu in lieux" :key="lieu.id" class="fr-mb-2w" :class="{ 'liste-lieux__choisi': lieu.id === lieuChoisi }">
       <h3 class="fr-h6 fr-mb-1v">{{ lieu.nom }}</h3>
-      <p class="fr-text--sm fr-mb-1v">{{ libelleCategorie(lieu.categorie) }} — {{ lieu.adresse }}</p>
-      <p v-if="lieu.description" class="fr-text--sm fr-mb-1v">{{ lieu.description }}</p>
+      <p class="fr-text--sm fr-mb-1v">{{ libelleCategorie(lieu.categorie) }}</p>
+      <p class="fr-text--sm fr-mb-1v">{{ lieu.commune }} — {{ lieu.adresse }}</p>
+      <p class="fr-text--sm fr-mb-1v">Places couchées : {{ lieu.placesCouchees }}</p>
+      <p class="fr-text--sm fr-mb-1v">
+        Téléphone de la commune :
+        <a :href="lienTelephone(lieu.telephone)">{{ lieu.telephone }}<span class="fr-sr-only"> (appeler la commune de {{ lieu.commune }})</span></a>
+      </p>
+      <p class="fr-text--sm fr-mb-1v">Accessible aux personnes à mobilité réduite : {{ ouiOuNon(lieu.accessibleMobiliteReduite) }}</p>
+      <p class="fr-text--sm fr-mb-1v">Animaux acceptés : {{ ouiOuNon(lieu.animauxAcceptes) }}</p>
       <DsfrButton
         size="sm"
         tertiary

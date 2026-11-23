@@ -12,4 +12,4 @@
 | Lancer | `npm run dev` |
 
 ## Stories réalisées
-_(aucune pour l'instant)_
+- Demande libre #1 — Carte des lieux d'hébergement d'urgence (places couchées, contact, accès, animaux) : revues/libre-1-il-faudrait-un-truc-pour-s.md
