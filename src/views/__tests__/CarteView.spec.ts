@@ -1,10 +1,13 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest'
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
 import { createPinia, setActivePinia } from 'pinia'
 import VueDsfr from '@gouvminint/vue-dsfr'
 import CarteView from '../CarteView.vue'
 import { useLieuxStore } from '@/stores/lieux'
 import { violationsAccessibilite } from '@/__tests__/accessibilite'
+
+// Pas d'appel réel à Géorisques dans ces tests (voir CarteViewInondation.spec.ts pour les zones inondables).
+vi.mock('@/services/georisques', () => ({ estEnZoneInondable: vi.fn<() => Promise<boolean>>().mockRejectedValue(new Error('hors ligne')) }))
 
 // La carte (WebGL) est remplacée : son contenu est vérifié dans le navigateur ; ici, la liste.
 const monter = () =>
