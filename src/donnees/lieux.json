@@ -1,0 +1,11 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [2.3522, 48.8566] }, "properties": { "id": "accueil-centre", "nom": "Accueil du centre", "categorie": "accueil", "adresse": "1 place fictive, 75004 Paris", "description": "Accueil du public du lundi au vendredi (exemple fictif)." } },
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [2.3376, 48.8606] }, "properties": { "id": "accueil-ouest", "nom": "Accueil ouest", "categorie": "accueil", "adresse": "12 rue d'Exemple, 75001 Paris", "description": "Sur rendez-vous (exemple fictif)." } },
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [2.3700, 48.8530] }, "properties": { "id": "salle-bastille", "nom": "Salle de réunion Bastille", "categorie": "salle", "adresse": "8 boulevard Imaginaire, 75011 Paris", "description": "20 places (exemple fictif)." } },
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [2.3200, 48.8420] }, "properties": { "id": "salle-montparnasse", "nom": "Salle Montparnasse", "categorie": "salle", "adresse": "3 avenue Fictive, 75014 Paris", "description": "Équipée pour la visioconférence (exemple fictif)." } },
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [2.3950, 48.8650] }, "properties": { "id": "borne-pere-lachaise", "nom": "Borne de recharge Est", "categorie": "equipement", "adresse": "Parking fictif, 75020 Paris", "description": "Deux points de charge (exemple fictif)." } },
+    { "type": "Feature", "geometry": { "type": "Point", "coordinates": [2.2950, 48.8740] }, "properties": { "id": "local-velos", "nom": "Local vélos", "categorie": "equipement", "adresse": "5 rue Exemplaire, 75017 Paris", "description": "30 places sécurisées (exemple fictif)." } }
+  ]
+}
