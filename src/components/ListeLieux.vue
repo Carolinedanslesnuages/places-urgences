@@ -17,8 +17,8 @@ const emit = defineEmits<{ choisir: [id: string] }>()
   <ul class="liste-lieux fr-p-0">
     <li v-for="lieu in lieux" :key="lieu.id" class="liste-lieux__fiche fr-p-2w fr-mb-2w" :class="{ 'liste-lieux__choisi': lieu.id === lieuChoisi }">
       <h3 class="fr-h6 fr-mb-1v">{{ lieu.nom }}</h3>
+      <p class="fr-h4 fr-mb-1w liste-lieux__places">Places couchées : {{ lieu.placesCouchees }}</p>
       <div class="fr-badges-group fr-mb-1w">
-        <DsfrBadge type="info" no-icon :label="`Places couchées : ${lieu.placesCouchees}`" />
         <template v-if="statutsInondation">
           <DsfrBadge
             v-if="avertissementInondation(statutsInondation[lieu.id] ?? 'non-verifie')"
@@ -58,6 +58,9 @@ const emit = defineEmits<{ choisir: [id: string] }>()
 }
 .liste-lieux__fiche {
   border: 1px solid var(--border-default-grey);
+}
+.liste-lieux__places {
+  color: var(--text-action-high-blue-france);
 }
 .liste-lieux__choisi {
   border: 2px solid var(--border-active-blue-france);
