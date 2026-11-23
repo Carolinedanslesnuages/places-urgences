@@ -56,13 +56,13 @@ describe('Carte des lieux d’hébergement', () => {
 
   it('annonce le total des places, qui suit le filtre choisi', async () => {
     const wrapper = monter()
-    expect(wrapper.find('[role="status"]').text()).toBe('6 lieux affichés — 480 places couchées au total')
+    expect(wrapper.find('p.fr-text--bold[role="status"]').text()).toBe('6 lieux affichés — 480 places couchées au total')
     await wrapper.find('#categorie-gymnase').setValue(false)
     expect(wrapper.findAll('.liste-lieux h3').map((titre) => titre.text())).toEqual(['École Jules Exemple', 'École Marie Imaginaire', 'Salle communale de Valmer'])
-    expect(wrapper.find('[role="status"]').text()).toBe('3 lieux affichés — 130 places couchées au total')
+    expect(wrapper.find('p.fr-text--bold[role="status"]').text()).toBe('3 lieux affichés — 130 places couchées au total')
     await wrapper.find('#categorie-ecole').setValue(false)
     expect(wrapper.text()).toContain('Aucun lieu pour ces filtres')
-    expect(wrapper.find('[role="status"]').text()).toBe('0 lieu affiché — 0 place couchée au total')
+    expect(wrapper.find('p.fr-text--bold[role="status"]').text()).toBe('0 lieu affiché — 0 place couchée au total')
     wrapper.unmount()
   })
 
