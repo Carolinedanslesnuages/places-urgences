@@ -8,7 +8,7 @@ const router = createRouter({
 
 // Titre de page qui dit où l'on est (RGAA 8.6).
 router.afterEach(() => {
-  document.title = 'Carte des lieux — Places urgences'
+  document.title = 'Lieux d’hébergement d’urgence — Places urgences'
 })
 
 export default router

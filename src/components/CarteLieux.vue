@@ -4,7 +4,7 @@ import type { Map as CarteMapLibre, Marker } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 // Le worker de MapLibre, construit par Vite (sinon introuvable une fois le site construit).
 import adresseWorker from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url'
-import type { Lieu } from '@/lib/lieux'
+import { resumeLieu, type Lieu } from '@/lib/lieux'
 
 /**
  * Carte MapLibre, fond « Plan IGN » de la Géoplateforme (data.geopf.fr). Elle double la liste
@@ -28,7 +28,7 @@ function afficherLieux(): void {
   marqueurs = props.lieux.map((lieu) => {
     const marqueur = new maplibre!.Marker({ color: lieu.id === props.lieuChoisi ? '#e1000f' : '#000091' })
       .setLngLat(lieu.position)
-      .setPopup(new maplibre!.Popup({ offset: 24 }).setText(`${lieu.nom} — ${lieu.adresse}`))
+      .setPopup(new maplibre!.Popup({ offset: 24 }).setText(resumeLieu(lieu)))
       .addTo(carte!)
     const element = marqueur.getElement()
     element.setAttribute('aria-label', lieu.nom)
@@ -56,8 +56,8 @@ onMounted(async () => {
       },
       layers: [{ id: 'plan-ign', type: 'raster', source: 'planIgn' }],
     },
-    center: [2.35, 48.86],
-    zoom: 11,
+    center: [-1.55, 47.22],
+    zoom: 10,
     cooperativeGestures: true,
   })
   carte.addControl(new maplibre.NavigationControl({ showCompass: false }))
