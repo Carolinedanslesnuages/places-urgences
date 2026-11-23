@@ -92,8 +92,8 @@ onUnmounted(() => carte?.remove())
 <style scoped>
 .carte {
   width: 100%;
-  height: 32rem;
-  min-height: 20rem;
+  height: 75vh;
+  min-height: 24rem;
 }
 @media (prefers-reduced-motion: reduce) {
   .carte :deep(*) {

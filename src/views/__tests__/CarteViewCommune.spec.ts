@@ -40,7 +40,9 @@ describe('Chercher les lieux près d’une commune', () => {
   it('propose les communes dont le nom commence par la saisie, avec une étiquette visible', async () => {
     rechercherCommunes.mockResolvedValue([nantesProchePontclair, { code: '44998', nom: 'Pontlieue', position: [-1.5, 47.2] }])
     const wrapper = monter()
-    expect(wrapper.find('label[for="champ-commune"]').text()).toContain('Commune')
+    const etiquette = wrapper.find('label[for="champ-commune"]')
+    expect(etiquette.text()).toContain('Commune')
+    expect(etiquette.classes()).not.toContain('fr-sr-only')
     await saisir(wrapper, 'Pont')
     expect(rechercherCommunes).toHaveBeenCalledWith('Pont')
     const propositions = wrapper.findAll('ul[aria-label="Communes proposées"] button').map((bouton) => bouton.text())

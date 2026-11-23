@@ -22,28 +22,33 @@ const annonce = computed(() => {
 </script>
 
 <template>
-  <h1>Lieux d'hébergement d'urgence</h1>
-  <p>Les lieux proposés par les communes sont présentés sur une carte et dans une liste, qui donnent les mêmes informations.</p>
+  <h1 class="fr-h3 fr-mb-2w">Lieux d'hébergement d'urgence</h1>
 
-  <DsfrCheckboxSet v-model="categoriesChoisies" legend="Afficher" :options="options" inline />
-  <DsfrCheckbox
-    id="filtre-hors-zone-inondable"
-    v-model="horsZoneInondableSeulement"
-    name="hors-zone-inondable"
-    label="Hors zone inondable"
-    :disabled="!filtreHorsZoneDisponible"
-  />
-  <p class="fr-text--bold" role="status">{{ annonce }}</p>
+  <div class="fr-grid-row fr-grid-row--gutters fr-mb-1w">
+    <div class="fr-col-12 fr-col-lg-6">
+      <DsfrCheckboxSet v-model="categoriesChoisies" legend="Afficher" :options="options" inline />
+      <DsfrCheckbox
+        id="filtre-hors-zone-inondable"
+        v-model="horsZoneInondableSeulement"
+        name="hors-zone-inondable"
+        label="Hors zone inondable"
+        :disabled="!filtreHorsZoneDisponible"
+      />
+    </div>
+    <div class="fr-col-12 fr-col-lg-6">
+      <RechercheCommune />
+    </div>
+  </div>
+  <p class="fr-text--bold fr-mb-1w" role="status">{{ annonce }}</p>
   <div role="status">
     <DsfrAlert v-if="georisquesEnPanne" type="warning" small>
       Géorisques ne répond pas : les zones inondables ne peuvent pas être vérifiées. Aucun lieu n'est présenté comme sûr, et le filtre « Hors zone inondable » est désactivé.
     </DsfrAlert>
     <p v-else-if="!filtreHorsZoneDisponible" class="fr-text--sm">Vérification des zones inondables en cours : le filtre « Hors zone inondable » sera disponible ensuite.</p>
   </div>
-  <RechercheCommune />
 
   <div class="fr-grid-row fr-grid-row--gutters">
-    <div class="fr-col-12 fr-col-lg-8">
+    <div class="fr-col-12 fr-col-lg-8 carte-colonne">
       <CarteLieux
         :lieux="lieuxAffiches"
         :lieu-choisi="lieuChoisi"
@@ -66,3 +71,13 @@ const annonce = computed(() => {
     </section>
   </div>
 </template>
+
+<style scoped>
+@media (min-width: 62em) {
+  .carte-colonne {
+    position: sticky;
+    top: 1rem;
+    align-self: flex-start;
+  }
+}
+</style>
